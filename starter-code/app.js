@@ -72,9 +72,9 @@ passport.use('local-login', new LocalStrategy((username, password, next) => {
 passport.use('local-signup', new LocalStrategy(
   { passReqToCallback: true },
   (req, username, password, next) => {
-    console.log(req.files);
+    // console.log(req.files);
 //PICTURE UPLOAD ---------------------------------------------------------
-    req.files.picture.mv(`./public/images/${req.files.picture.name}`).then( () =>{ ;
+    if(req.files.picture)req.files.picture.mv(`./public/images/${req.files.picture.name}`).then( () =>{ ;
     // To avoid race conditions
     process.nextTick(() => {
         User.findOne({
@@ -90,7 +90,6 @@ passport.use('local-signup', new LocalStrategy(
                   username,
                   email,
                   password,
-                  picture,
                 } = req.body;
                 const hashPass = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
                 const newUser = new User({

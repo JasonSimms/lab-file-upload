@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
 
 const PostsSchema = Schema({
-  content: String,
-  creatorId: {
+  content: {
     type: String,
-    default: 'yoda'
+    required: true
   },
+  creatorId: String,
+  creatorName: String,
   picPath: String,
   picName: String,
 });
