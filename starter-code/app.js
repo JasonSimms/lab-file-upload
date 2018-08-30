@@ -16,6 +16,8 @@ const hbs                = require('hbs')
 //MY ADDITIONS:
 const fileUpload = require("express-fileupload");
 const fs = require('fs')
+const Posts               = require('./models/posts');
+
 
 mongoose
   .connect('mongodb://localhost/tumblr-lab-development', {useMongoClient: true})
@@ -71,7 +73,7 @@ passport.use('local-signup', new LocalStrategy(
   { passReqToCallback: true },
   (req, username, password, next) => {
     console.log(req.files);
-//PICTURE UPLOAD -----------------------
+//PICTURE UPLOAD ---------------------------------------------------------
     req.files.picture.mv(`./public/images/${req.files.picture.name}`).then( () =>{ ;
     // To avoid race conditions
     process.nextTick(() => {
@@ -95,7 +97,7 @@ passport.use('local-signup', new LocalStrategy(
                   username,
                   email,
                   password: hashPass,
-                  picture: `./public/images/${req.files.picture.name}`,
+                  picture: `/images/${req.files.picture.name}`,
                 });
 
                 newUser.save((err) => {

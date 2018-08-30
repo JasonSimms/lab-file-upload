@@ -34,4 +34,11 @@ router.get('/logout', ensureLoggedIn('/login'), (req, res) => {
     res.redirect('/');
 });
 
+router.get('/posts', (req,res) => {
+    Posts.find({}).then(result => {
+        res.send(result)
+    })
+
+})
+
 module.exports = router;
