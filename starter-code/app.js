@@ -13,8 +13,9 @@ const MongoStore         = require('connect-mongo')(session);
 const mongoose           = require('mongoose');
 const flash              = require('connect-flash');
 const hbs                = require('hbs')
-
-// mongoose.connect('mongodb://localhost/tumblr-lab-development')
+//MY ADDITIONS:
+const fileUpload = require("express-fileupload");
+const fs = require('fs')
 
 mongoose
   .connect('mongodb://localhost/tumblr-lab-development', {useMongoClient: true})
@@ -35,6 +36,9 @@ app.use(session({
   saveUninitialized: true,
   store: new MongoStore( { mongooseConnection: mongoose.connection })
 }))
+
+//initiate fileupload------------------
+app.use(fileUpload())
 
 passport.serializeUser((user, cb) => {
   cb(null, user.id);
@@ -66,6 +70,9 @@ passport.use('local-login', new LocalStrategy((username, password, next) => {
 passport.use('local-signup', new LocalStrategy(
   { passReqToCallback: true },
   (req, username, password, next) => {
+    console.log(req.files);
+//PICTURE UPLOAD -----------------------
+    req.files.picture.mv(`./public/images/${req.files.picture.name}`).then( () =>{ ;
     // To avoid race conditions
     process.nextTick(() => {
         User.findOne({
@@ -88,7 +95,7 @@ passport.use('local-signup', new LocalStrategy(
                   username,
                   email,
                   password: hashPass,
-                  picture,
+                  picture: `./public/images/${req.files.picture.name}`,
                 });
 
                 newUser.save((err) => {
@@ -98,7 +105,9 @@ passport.use('local-signup', new LocalStrategy(
             }
         });
     });
+  })
 }));
+
 
 app.use(flash());
 app.use(passport.initialize());
