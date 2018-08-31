@@ -54,36 +54,21 @@ router.get("/createpost", ensureLoggedIn("/login"), (req, res) => {
 });
 
 router.post("/createpost", ensureLoggedIn("/login"), (req, res) => {
-    const { content, picName, picPath} = req.body;
-    // res.send(req.body)
-    // console.log(req.user._id)
+    const { content, picName} = req.body;
+    // res.send(req.files.picPath.name)
+    console.log(req.user._id)
+    if (req.files.picPath) req.files.picPath.mv(`./public/images/postpics/${req.files.picPath.name}`)
     new Posts({
         creatorId : req.user._id,
         creatorName: req.user.username,
         content,
         picName,
-        picPath,
+        picPath : `/images/postpics/${req.files.picPath.name}`,
     }).save().then(data => {
-        res.send(data)
+        // res.send(data)
+        res.render('newpost', {data})
     })
 
-//   new Celeb({
-//     name,
-//     occupation,
-//     catchPhrase
-//   })
-//     .save()
-//     .then(data => {
-//       res.render("show", { data, new: true });
-//     });
-// });
-    // Posts.create(req.body, err => {
-    //     if (err) {
-    //         throw err
-    //     }
-    //     console.log(`Created a posts!`)
-//   })
-//   res.redirect('/posts')
 })
 
 module.exports = router;
